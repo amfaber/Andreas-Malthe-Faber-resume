@@ -2,7 +2,7 @@
 
 In the problem a pikeman is an avid competitive programmer, for some reason. When he parttakes in competitions, he also knows exactly how long each problem will take to solve, for some reason. When submitting the answers, he is also penalized by how long the competition has run at the time of handing in each problem, for some reason. Anyways, we are tasked with finding out how many problems he can solve and what his lowest possible penalty for solving them will be. As input, we are given how many problems are on the test, as well as how long time the poor pikeman has to solve this multitude of problems. Along with this, we are also given a set of constants $A$, $B$, $C$ and $t_0$, which govern how long the rest of the problems will take to solve using the iterative formula
 
-$$t_i=((At_i−1+B)\mod C)+1,i∈[1, N-1]$$
+<img src="https://latex.codecogs.com/svg.image?t_i=(A&space;t_{i-1}&plus;B)\mod&space;C)&plus;1" title="t_i=(A t_{i-1}+B)\mod C)+1" />
 
 For the easy version of this problem, one could simply calculate all $t_i$'s and sort them and go through the sorted list until the timeconstraint $T$ was possibly met, while calculating the total penalty and counting the number of problems. However, this is intractable for the hard version, since the number of problems is now up to $10^9$, making it infeasible to loop through and calculate all the $t_i$'s, *especially* in pure python. Instead, we will have to get clever.
 
