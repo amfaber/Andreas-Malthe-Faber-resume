@@ -1,0 +1,39 @@
+# Ab Initio
+
+https://open.kattis.com/problems/abinitio (Difficulty 7.5)
+
+The problem consists of reading a graph, G, and a list of queries, Q, from input. G should then be modified according to the queries in Q.
+
+My solution models the graph of V vertices as a $V\times V$ boolean matrix, which i will refer to as $M$ for the rest of the document. In $M$, a 1 at position $(i,j)$ represents a connection from vertice $i$ to vertice $j$. Notice that every possible connection in the graph corresponds to an entry in $M$.
+
+With this datastructure, all 6 query types become simple to implement. Query type 1 entails adding an unconnected vertex to the graph, which corresponds to simply increasing the size of the matrix to $V = V + 1$.
+
+Query type 2 entails making a new connection between two vertices $i$ and $j$, corresponding to setting the value of $M$ at $(i, j)$ to 1.
+
+Query type 3 entails removing all connections to and from a vertex $i$, which corresponds to setting all entries in row $i$ to 0 and all entries in column $i$ to 0 as well.
+
+Query type 4 entails removing a single connection, making the implementation identical to query type 2, only instead of setting the entry to 1 we set it to 0.
+
+Query type 5 entails transposing the graph, inverting the direction of every connection in the graph. This corresponds to swapping what is the rows and columns of $M$, meaning that a transposition of the graph is identical to a transposition of $M$.
+
+Query type 6 entails creating every possible connection that was not present before the query, while removing every connection that was present before, though no point is allowed to connect to itself. This corresponds to applying the function "logical not" to $M$ elementwise, after which the entire diagonal of $M$ can be set to 0, ensuring no point connects to itself.
+
+By representing $G$ with $M$, each query type has a straightforward implementation and types 1-4 are all computationally cheap, being O(1), except for type 3 which is O(V). Types 5 and 6 are O(V^2) as they require us to affect the whole of $M$ in a single command, and is such they are much slower than the rest of the queries.
+
+However, if we are a little bit clever, for any set of queries Q, we will only ever have to execute query types 5 and 6 once each at most. This because, both of them have the property that they are their own inverse operation; if $M$ is transposed twice back-to-back, the result is the same as doing nothing at all. Similarly for logically inverting $M$, doing this operation twice simply returns M. 
+
+
+This obviously doesnt hold if operations are done in between each inversion, but this limitation can be overcome. Suppose we have our list of queries $Q$ to be performed on $M$. We can mentally picture that this list is read from top to bottom and the operations performed in the order of reading. We would now like to build another list of queires $Q'$, which is identical to $Q$ in the sense that if $Q'$ is applied to $M$, the resulting matrix is the same as if $Q$ was applied. We build $Q'$ in the following way; By default, each operation which is not of type 5 or 6 is merely copied one-by-one from $Q$ to $Q'$ from the top. Suppose a query of type 5 is encountered in $Q$, this query is now added to the bottom of $Q'$ like before, but now for every query after this one, we would like to swap the order of the type 5 query and the one we are about to add to $Q'$ such that the type 5 query remains at the bottom of $Q'$ during construction of $Q'$. This is achieved by realizing that performing a type 5 query followed by a query of types 1, 2 and 4 is the exact same as doing the type 1,2 or 4 query *but switching $i$ and $j$* and then doing the transposition required by type 5.
+<br><br>
+
+Similarly, if a query is added after a type 6 query, their order can be switched such that the type 6 is still at the bottom of $Q'$. This is done by switching "create connection" queries to "remove connection" queries instead. Under this transformation, type 2 becomes type 4 and vice versa, while type 3 becomes a new "type 7" which creates all possible connections to and from a vertex, except for to the vertex itself. Type 1 then becomes increase the number of vertices, and enable all connections to that new vertex, meaning it effectively becomes two operations - type 1 followed by type 7.
+
+If there is both a type 5 and a type 6 query at the bottom of $Q'$, both transformations are applied simultaneously. For example, a type 4 becomes type 2 with $i$ and $j$ switched.
+<br><br>
+By using these "transformations" of operations, it can be ensured that both type 5 and 6 are kept at the bottom of $Q'$ during construction. This means that if there is a type 5 (or 6) at the bottom of $Q'$ and a new type 5 (or 6) is met in $Q$, they cancel each other out, and the one at the bottom of $Q'$ can simply be removed instead of adding the new one from $Q$. With this method, it is garantueed that $Q'$ will at most contain 1 type 5 query, and at most 1 type 6 query, significantly increasing the speed of the algorithm in some cases.
+
+However, even with this optimization my solution in python still exceeded the 1 second time limit imposed by Kattis, and so I implemented the algorithm in c++ instead.
+
+During the conversion to c++, I had the problem of getting the right answer on the public test data, while failing with "Wrong Answer" on the hidden data. To troubleshoot, I made a small python script to generate random graphs and lists of queries, which I could feed into both my c++ implementation and python implementation, which I was fairly confident was operating correctly even if slowly.
+
+Eventually I ironed out the bugs of the c++ implementation, and it performed well enough to get below the 1 second mark.
