@@ -1,0 +1,3 @@
+[submodule "LIT-PCBA-parser"]
+	path = LIT-PCBA-parser
+	url = https://github.com/amfaber/LIT-PCBA-parser
