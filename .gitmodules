@@ -1,3 +1,6 @@
 [submodule "LIT-PCBA-parser"]
 	path = LIT-PCBA-parser
 	url = https://github.com/amfaber/LIT-PCBA-parser
+[submodule "EquiBind"]
+	path = EquiBind
+	url = https://github.com/amfaber/EquiBind
