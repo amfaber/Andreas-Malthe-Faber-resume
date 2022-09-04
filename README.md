@@ -14,9 +14,6 @@ In my spare time, I enjoy solving programming challenges such as those presented
 ## Performance, numpy and pandas
 As much of my work on my Master's Thesis deals with fairly large data quantities (>5Gb), delegating these tasks to libraries written in something more performant than python is critical. Through this work, and the performance critical-algorithm challenges from Kattis, I have become very conscious of whether hot loops are delegated to faster libraries or running in (slow) native python. I also have experience with profiling a script and optimizing the hottest parts for a better runtime.
 
-## Bachelors project
-I initially learned python through use on my Bachelors Thesis. However, this was before I took the time to properly acquaint myself with git and github, and thus most of the code is lost on a server I no longer have access to.
-
 # Rust
 Python is a fantastic multi-tool, but I have at various times run into the limitation of its slow runtime. Usually, this can be alleviated by using appropriate libraries. However, I have recently become more and more interested in writing the code critical code directly in a performant language. When choosing which performant langauge to learn, I had heard only good things about Rust and its community, and thus decided to dedicate some time to learning the language.
 
@@ -31,7 +28,7 @@ Another fast runtime language, C++ was a competitor to Rust for my choice of sec
 ## Gnina modifications
 Another critical model in my Master's Thesis is [gnina](https://github.com/gnina/gnina), which is written in C++. Initially, just building the project on a server I didn't have root access to was quite the challenge. I eventually got all the dependencies built from source, and was then able to build gnina. As gnina is integrated into the training of a generative model, I ran into a problem much like the one I initially encountered in EquiBind. Constantly calling gnina in the training loop was repeatedly loading both the CNN and the protein, while it would be greatly preferable to keep these two in memory while loading new molecules. As a solution, I made a new option for the gnina CLI: "--continuous-operation", in which the binary doesn't shut down after calculating the molecules, but instead awaits input from stdin. Once anything other than "quit" is received, it is assumed that the supplied input file has been mutated, and the molecules are loaded and scored against the protein again. Once gnina finishes computation, it outputs a specific string to stdout. In the training loop, this binary is called from a python subprocess, and the communication between python and C++ can then be achieved through stdio.
 
-While this setup is a hack, it was quick and preferable to refactoring the very large gnina project into something like a proper python package.
+While this setup is a bit of a hack, it was quick and preferable to refactoring the very large gnina project into something like a proper python package.
 
 ## Ab Initio Kattis problem
 My first C++ project was for a [specific Kattis problem](https://github.com/amfaber/Andreas-Malthe-Faber-resume/tree/main/Kattis%20problems%20with%20explanations/7.5%20-%20Ab%20initio) where I could not get the python runtime under 1 second, no matter how many improvements I made to the algorithm. Thus, I decided to implement the algorithm in C++ instead. There was some initial friction, but being able to troubleshoot through the working (slower) implementation in Python was instrumental to debugging the C++ implementation.
